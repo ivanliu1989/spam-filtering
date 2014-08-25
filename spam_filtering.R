@@ -27,3 +27,35 @@ spam.docs <- spam.docs[which(spam.docs != "cmds")]
 all.spam <- sapply(spam.docs,
                    function(p) get.msg(file.path(spam.path, p)))
 
+# Create a TermDocumentMatrix (TDM) from the corpus of SPAM email.
+# The TDM control can be modified, and the sparsity level can be 
+# altered.  This TDM is used to create the feature set used to do 
+# train our classifier.
+get.tdm <- function(doc.vec) {
+    doc.corpus <- Corpus(VectorSource(doc.vec))
+    control <- list(stopwords=TRUE, removePunctuation=TRUE, removeNumbers=TRUE,
+                    minDocFreq=2)
+    doc.dtm <- TermDocumentMatrix(doc.corpus, control)
+    return(doc.dtm)
+}
+spam.tdm <- get.tdm(all.spam)
+
+# Create a data frame that provides the feature set from the training SPAM data
+spam.matrix <- as.matrix(spam.tdm)
+spam.counts <- rowSums(spam.matrix)
+spam.df <- data.frame(cbind(names(spam.counts),
+                            as.numeric(spam.counts)),
+                      stringsAsFactors = FALSE)
+names(spam.df) <- c("term", "frequency")
+spam.df$frequency <- as.numeric(spam.df$frequency)
+spam.occurrence <- sapply(1:nrow(spam.matrix),
+                          function(i)
+                          {
+                              length(which(spam.matrix[i, ] > 0)) / ncol(spam.matrix)
+                          })
+spam.density <- spam.df$frequency / sum(spam.df$frequency)
+
+# Add the term density and occurrence rate
+spam.df <- transform(spam.df,
+                     density = spam.density,
+                     occurrence = spam.occurrence)
