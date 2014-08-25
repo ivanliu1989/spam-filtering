@@ -59,3 +59,7 @@ spam.density <- spam.df$frequency / sum(spam.df$frequency)
 spam.df <- transform(spam.df,
                      density = spam.density,
                      occurrence = spam.occurrence)
+
+# Now do the same for the EASY HAM email
+ham.docs <- dir(easyham.path)
+ham.docs <- ham.docs[1:500]
