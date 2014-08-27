@@ -78,3 +78,18 @@ ham.occurrence <- sapply(1:nrow(ham.matrix),
                          })
 ham.density <- ham.df$frequency/sum(ham.df$frequency)
 ham.df <- transform(ham.df, density=ham.density,occurrence=ham.occurrence)
+
+classify.email <- function(path,training.df,prior=.5, c=1e-6){
+    msg <- getmsg(path)
+    msg.tdm <- get.tdm(msg)
+    msg.freq <- rowSums(as.matrix(msg.tdm))
+    # find intersections of words
+    msg.match <- intersect(names(msg.freq),training.df$term)
+    if(length(msg.match)<1){
+        return(prior*c^(length(msg.freq)))
+    }
+    else{
+        match.probs <- training.df$occurrence[match(msg.match,training.df$term)]
+        return(prior*prod(match.probs)*c^(length(msg.freq)-length(msg.match)))
+    }
+}
