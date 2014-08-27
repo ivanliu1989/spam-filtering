@@ -185,3 +185,17 @@ get.results <- function(bool.vector)
                  length(bool.vector[which(bool.vector == TRUE)]) / length(bool.vector))
     return(results)
 }
+
+
+# Save results as a 2x3 table
+easyham2.col <- get.results(subset(class.df, Type == "EASYHAM")$Class)
+hardham2.col <- get.results(subset(class.df, Type == "HARDHAM")$Class)
+spam2.col <- get.results(subset(class.df, Type == "SPAM")$Class)
+
+class.res <- rbind(easyham2.col, hardham2.col, spam2.col)
+colnames(class.res) <- c("NOT SPAM", "SPAM")
+print(class.res)
+
+# Save the training data for use in Chapter 4
+write.csv(spam.df, file.path("data", "spam_df.csv"), row.names = FALSE)
+write.csv(ham.df, file.path("data", "easyham_df.csv"), row.names = FALSE)
