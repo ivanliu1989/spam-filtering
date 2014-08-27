@@ -175,7 +175,7 @@ class.plot <- ggplot(class.df, aes(x = log(Pr.HAM), log(Pr.SPAM))) +
     theme_bw() +
     theme(axis.text.x = element_blank(), axis.text.y = element_blank())
 ggsave(plot = class.plot,
-       filename = file.path("images", "final_classification.pdf"),
+       filename = file.path("images", "final_classification_2.pdf"),
        height = 10,
        width = 10)
 
