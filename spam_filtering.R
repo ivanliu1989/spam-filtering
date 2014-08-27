@@ -79,8 +79,9 @@ ham.occurrence <- sapply(1:nrow(ham.matrix),
 ham.density <- ham.df$frequency/sum(ham.df$frequency)
 ham.df <- transform(ham.df, density=ham.density,occurrence=ham.occurrence)
 
+# classifier
 classify.email <- function(path,training.df,prior=.5, c=1e-6){
-    msg <- getmsg(path)
+    msg <- get.msg(path)
     msg.tdm <- get.tdm(msg)
     msg.freq <- rowSums(as.matrix(msg.tdm))
     # find intersections of words
@@ -93,3 +94,18 @@ classify.email <- function(path,training.df,prior=.5, c=1e-6){
         return(prior*prod(match.probs)*c^(length(msg.freq)-length(msg.match)))
     }
 }
+
+# test
+hardham.docs <- dir(hardham.path)
+hardham.docs <- hardham.docs[which(hardham.docs!='cmds')]
+
+hardham.spamtest <- sapply(hardham.docs,
+                           function(p)
+                               classify.email(paste(hardham.path,p,sep='/'),training.df=spam.df))
+
+hardham.hamtest <- sapply(hardham.docs,
+                          function(p) classify.email(paste(hardham.path,p,sep='/'),
+                                                     training.df=ham.df))
+
+hardham.res <- ifelse(hardham.spamtest>hardham.hamtest,TRUE,FALSE)
+summary(hardham.res)
