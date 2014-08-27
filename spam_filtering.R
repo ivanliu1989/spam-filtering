@@ -142,3 +142,21 @@ spam2.class <- suppressWarnings(lapply(spam2.docs,
                                            spam.classifier(file.path(spam2.path, p))
                                        }))
 
+easyham2.matrix <- do.call(rbind, easyham2.class)
+easyham2.final <- cbind(easyham2.matrix, "EASYHAM")
+
+hardham2.matrix <- do.call(rbind, hardham2.class)
+hardham2.final <- cbind(hardham2.matrix, "HARDHAM")
+
+spam2.matrix <- do.call(rbind, spam2.class)
+spam2.final <- cbind(spam2.matrix, "SPAM")
+
+class.matrix <- rbind(easyham2.final, hardham2.final, spam2.final)
+class.df <- data.frame(class.matrix, stringsAsFactors = FALSE)
+names(class.df) <- c("Pr.SPAM" ,"Pr.HAM", "Class", "Type")
+class.df$Pr.SPAM <- as.numeric(class.df$Pr.SPAM)
+class.df$Pr.HAM <- as.numeric(class.df$Pr.HAM)
+class.df$Class <- as.logical(as.numeric(class.df$Class))
+class.df$Type <- as.factor(class.df$Type)
+summary(class.df)
+head(class.df)
