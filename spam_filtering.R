@@ -109,3 +109,36 @@ hardham.hamtest <- sapply(hardham.docs,
 
 hardham.res <- ifelse(hardham.spamtest>hardham.hamtest,TRUE,FALSE)
 summary(hardham.res)
+
+# test all email types
+spam.classifier <- function(path){
+    pr.spam <- classify.email(path,spam.df)
+    pr.ham <- classify.email(path,ham.df)
+    return(c(pr.spam,pr.ham,ifelse(pr.spam>pr.ham,1,0)))
+}
+
+easyham2.docs <- dir(easyham2.path)
+easyham2.docs <- easyham2.docs[which(easyham2.docs != "cmds")]
+
+hardham2.docs <- dir(hardham2.path)
+hardham2.docs <- hardham2.docs[which(hardham2.docs != "cmds")]
+
+spam2.docs <- dir(spam2.path)
+spam2.docs <- spam2.docs[which(spam2.docs != "cmds")]
+
+easyham2.class <- suppressWarnings(lapply(easyham2.docs,
+                                          function(p)
+                                          {
+                                              spam.classifier(file.path(easyham2.path, p))
+                                          }))
+hardham2.class <- suppressWarnings(lapply(hardham2.docs,
+                                          function(p)
+                                          {
+                                              spam.classifier(file.path(hardham2.path, p))
+                                          }))
+spam2.class <- suppressWarnings(lapply(spam2.docs,
+                                       function(p)
+                                       {
+                                           spam.classifier(file.path(spam2.path, p))
+                                       }))
+
