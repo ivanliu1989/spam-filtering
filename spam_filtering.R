@@ -112,8 +112,8 @@ summary(hardham.res)
 
 # test all email types
 spam.classifier <- function(path){
-    pr.spam <- classify.email(path,spam.df)
-    pr.ham <- classify.email(path,ham.df)
+    pr.spam <- classify.email(path,spam.df,prior=.2)
+    pr.ham <- classify.email(path,ham.df,prior=.8)
     return(c(pr.spam,pr.ham,ifelse(pr.spam>pr.ham,1,0)))
 }
 
@@ -160,3 +160,28 @@ class.df$Class <- as.logical(as.numeric(class.df$Class))
 class.df$Type <- as.factor(class.df$Type)
 summary(class.df)
 head(class.df)
+
+# Create final plot of results
+class.plot <- ggplot(class.df, aes(x = log(Pr.HAM), log(Pr.SPAM))) +
+    geom_point(aes(shape = Type, alpha = 0.5)) +
+    stat_abline(yintercept = 0, slope = 1) +
+    scale_shape_manual(values = c("EASYHAM" = 1,
+                                  "HARDHAM" = 2,
+                                  "SPAM" = 3),
+                       name = "Email Type") +
+    scale_alpha(guide = "none") +
+    xlab("log[Pr(HAM)]") +
+    ylab("log[Pr(SPAM)]") +
+    theme_bw() +
+    theme(axis.text.x = element_blank(), axis.text.y = element_blank())
+ggsave(plot = class.plot,
+       filename = file.path("images", "final_classification.pdf"),
+       height = 10,
+       width = 10)
+
+get.results <- function(bool.vector)
+{
+    results <- c(length(bool.vector[which(bool.vector == FALSE)]) / length(bool.vector),
+                 length(bool.vector[which(bool.vector == TRUE)]) / length(bool.vector))
+    return(results)
+}
