@@ -68,7 +68,7 @@ all.ham <- sapply(ham.docs,function(p) get.msg(file.path(easyham.path,p)))
 ham.tdm <- get.tdm(all.ham)
 ham.matrix <- as.matrix(ham.tdm)
 ham.counts <- rowSums(ham.matrix)
-ham.df <- data.frame(cbind(names(spam.counts),as.numeric(spam.counts)),
+ham.df <- data.frame(cbind(names(ham.counts),as.numeric(ham.counts)),
                            stringsAsFactors=F)
 names(ham.df)<-c('term','frequency')
 ham.df$frequency <- as.numeric(ham.df$frequency)
